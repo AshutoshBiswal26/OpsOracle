@@ -1,1 +1,8 @@
-# Project dependencies
+# OpsOracle dependencies (pinned)
+
+# AWS SDK — collectors and Bedrock runtime
+boto3==1.38.4
+botocore==1.38.4
+
+# Testing
+pytest==8.3.5
