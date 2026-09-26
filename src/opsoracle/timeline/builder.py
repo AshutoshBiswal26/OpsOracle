@@ -2,6 +2,11 @@
 
 Ordering is stable: events are sorted by ``(timestamp, evidence_id)`` so identical
 timestamps break ties deterministically (requirements 4.1, 4.2).
+
+The timeline is also where evidence from (potentially overlapping) collections merges,
+so it deduplicates by the deterministic, content-derived ``evidence_id``: two identical
+signals collapse to a single timeline entry, which keeps duplicate inputs from surfacing
+as repeated rows in the final report (requirement 11.2).
 """
 
 from __future__ import annotations
@@ -14,8 +19,17 @@ UNASSIGNED_RESOURCE = "(no resource)"
 
 class TimelineBuilder:
     def build(self, events: list[EvidenceEvent]) -> list[EvidenceEvent]:
-        """Return events ordered ascending by (timestamp, evidence_id)."""
-        return sorted(events, key=lambda e: (e.timestamp, e.evidence_id))
+        """Return events deduplicated by evidence_id, ordered ascending.
+
+        Events are collapsed by their deterministic ``evidence_id`` (first occurrence
+        wins) and then sorted by ``(timestamp, evidence_id)`` so identical signals appear
+        once and identical timestamps break ties deterministically (requirements 4.1,
+        4.2, 11.2).
+        """
+        unique: dict[str, EvidenceEvent] = {}
+        for event in events:
+            unique.setdefault(event.evidence_id, event)
+        return sorted(unique.values(), key=lambda e: (e.timestamp, e.evidence_id))
 
     def group_by_resource(
         self, events: list[EvidenceEvent]

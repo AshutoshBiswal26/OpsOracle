@@ -9,6 +9,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 
+from .correlation import Correlation
+from .evidence import EvidenceEvent
+from .investigation import TimeWindow
+
 
 class Confidence(str, Enum):
     LOW = "low"
@@ -63,3 +67,46 @@ class ReasoningResult:
     def unavailable(cls, reason: str) -> "ReasoningResult":
         """Construct a graceful-degradation result (requirement 7.7)."""
         return cls(ai_available=False, notes=reason)
+
+
+@dataclass(frozen=True)
+class IncidentReport:
+    """The final incident report (requirement 8.1).
+
+    Holds the investigation window, a human-readable summary, the deterministic
+    observed timeline and correlations, and the (possibly unavailable) AI reasoning.
+    ``truncated`` records whether the context budget dropped evidence (requirement 6.3),
+    surfaced as a note in the rendered report.
+
+    Markdown rendering lives in ``opsoracle.reporting.incident_report`` and is invoked
+    through :meth:`to_markdown`; keeping the renderer in the reporting stage avoids a
+    circular import (that module already imports this one).
+    """
+
+    window: TimeWindow
+    summary: str
+    timeline: list[EvidenceEvent] = field(default_factory=list)
+    correlations: list[Correlation] = field(default_factory=list)
+    reasoning: ReasoningResult = field(default_factory=ReasoningResult)
+    truncated: bool = False
+
+    def to_dict(self) -> dict:
+        return {
+            "window": self.window.to_dict(),
+            "summary": self.summary,
+            "timeline": [e.to_dict() for e in self.timeline],
+            "correlations": [c.to_dict() for c in self.correlations],
+            "reasoning": self.reasoning.to_dict(),
+            "truncated": self.truncated,
+        }
+
+    def to_markdown(self) -> str:
+        """Render the report as Markdown (requirements 8.2-8.5).
+
+        Delegates to the reporting stage's renderer, which separates observed
+        deterministic evidence from inferred AI reasoning and cites evidence ids on
+        every claim. The import is deferred to call time to avoid a circular import.
+        """
+        from ..reporting.incident_report import render_markdown
+
+        return render_markdown(self)

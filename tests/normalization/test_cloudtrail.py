@@ -130,3 +130,55 @@ def test_naive_eventtime_coerced_to_utc():
     }
     e = CloudTrailNormalizer().normalize([record])[0]
     assert e.timestamp.tzinfo is not None
+
+
+def test_raw_ref_is_originating_record():
+    """raw_ref must retain a reference to the exact originating raw record (req 3.5)."""
+    record = full_record()
+    events = CloudTrailNormalizer().normalize([record])
+    assert len(events) == 1
+    # Identity check, not equality: the produced event points back at the same object.
+    assert events[0].raw_ref is record
+
+
+def test_full_record_metadata_and_utc_timestamp():
+    """A full record populates metadata and yields a tz-aware UTC timestamp (req 3.1, 3.2, 3.3)."""
+    e = CloudTrailNormalizer().normalize([full_record()])[0]
+    # Timestamp is timezone-aware and normalized to a zero UTC offset.
+    assert e.timestamp.tzinfo is not None
+    assert e.timestamp.utcoffset() == timezone.utc.utcoffset(None)
+    # Metadata carries detail extracted from both the top level and the nested event.
+    assert e.metadata["event_source"] == "ec2.amazonaws.com"
+    assert e.metadata["source_ip"] == "10.0.0.1"
+    assert e.metadata["read_only"] is False  # coerced from "false"
+    # Actor identity fully populated from the nested CloudTrailEvent detail.
+    assert e.actor.type == "IAMUser"
+    assert e.actor.principal_id == "AIDA123"
+    assert e.actor.account == "123456789012"
+
+
+def test_malformed_records_recorded_with_reason_and_good_records_survive():
+    """Multiple malformed records are skipped with reasons; every good record still normalizes (req 3.4, 11.2)."""
+    norm = CloudTrailNormalizer()
+    good_a = full_record()
+    good_b = {
+        "EventName": "StopInstances",
+        "EventTime": datetime(2026, 9, 23, 13, 0, 0, tzinfo=UTC),
+    }
+    batch = [
+        "garbage",              # not a dict
+        good_a,
+        {"EventName": "NoTime"},  # missing timestamp
+        good_b,
+        {"EventTime": datetime(2026, 9, 23, 14, tzinfo=UTC)},  # missing event name
+    ]
+    events = norm.normalize(batch)
+
+    # Both good records survived, in order, despite the malformed ones interleaved.
+    assert [e.event_type for e in events] == ["RunInstances", "StopInstances"]
+    # Three malformed records were skipped, each with a non-empty reason string.
+    assert len(norm.skipped) == 3
+    for entry in norm.skipped:
+        assert isinstance(entry.get("reason"), str)
+        assert entry["reason"]
+        assert "raw" in entry

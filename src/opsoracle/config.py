@@ -14,6 +14,9 @@ from .errors import ConfigError
 
 # Environment variable names (single source of truth).
 ENV_REGION = "OPSORACLE_AWS_REGION"
+# AWS_PROFILE is a *name* that selects a profile in the Boto3/IAM credential chain.
+# It is not a secret and no credential material is read or stored here.
+ENV_PROFILE = "AWS_PROFILE"
 ENV_MODEL_ID = "OPSORACLE_MODEL_ID"
 ENV_MAX_EVENTS = "OPSORACLE_MAX_EVENTS"
 ENV_MAX_TOKENS = "OPSORACLE_MAX_TOKENS"
@@ -36,10 +39,13 @@ class Config:
     """Immutable runtime configuration.
 
     ``region`` may be ``None``, in which case the Boto3 default region resolution applies.
+    ``profile`` may be ``None`` to defer entirely to the Boto3 default credential chain;
+    it names a profile only and never carries credential material.
     This object intentionally holds no credentials.
     """
 
     region: str | None = None
+    profile: str | None = None
     model_id: str = DEFAULT_MODEL_ID
     max_events: int = DEFAULT_MAX_EVENTS
     max_tokens: int = DEFAULT_MAX_TOKENS
@@ -80,9 +86,11 @@ def load_config(env: dict[str, str] | None = None) -> Config:
 
     env = os.environ if env is None else env
     region = env.get(ENV_REGION) or None
+    profile = env.get(ENV_PROFILE) or None
     model_id = env.get(ENV_MODEL_ID) or DEFAULT_MODEL_ID
     return Config(
         region=region,
+        profile=profile,
         model_id=model_id,
         max_events=_get_positive_int(env, ENV_MAX_EVENTS, DEFAULT_MAX_EVENTS),
         max_tokens=_get_positive_int(env, ENV_MAX_TOKENS, DEFAULT_MAX_TOKENS),

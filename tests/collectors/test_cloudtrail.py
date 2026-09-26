@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import pytest
 
@@ -114,12 +114,42 @@ def test_unknown_filter_key_rejected():
         CloudTrailCollector(client).collect(make_window(), filters={"Bogus": "x"})
 
 
-def test_none_client_rejected():
-    with pytest.raises(ValidationError):
-        CloudTrailCollector(None)
+def test_none_client_builds_default_client():
+    # Per the design contract the client is injectable and defaults to None, in which
+    # case a default boto3 ``cloudtrail`` client is built from the given region via the
+    # standard credential chain (no network call is made at construction time).
+    collector = CloudTrailCollector(None, region="us-east-1")
+    assert collector._client is not None
 
 
 def test_window_type_guarded():
     client = FakeClient([{"Events": []}])
     with pytest.raises(ValidationError):
         CloudTrailCollector(client).collect("not-a-window")
+
+
+@pytest.mark.parametrize(
+    "start,end",
+    [
+        # start == end: not strictly before (the >= boundary case).
+        (datetime(2026, 9, 23, 12, tzinfo=UTC), datetime(2026, 9, 23, 12, tzinfo=UTC)),
+        # start > end: inverted window.
+        (
+            datetime(2026, 9, 23, 12, tzinfo=UTC),
+            datetime(2026, 9, 23, 12, tzinfo=UTC) - timedelta(hours=1),
+        ),
+    ],
+)
+def test_start_not_before_end_rejected_before_any_aws_call(start, end):
+    """Req 1.4: an invalid window (start >= end) is rejected with a ValidationError
+    before any AWS call is made.
+
+    The invariant is enforced at ``TimeWindow`` construction, which happens while
+    evaluating the argument to ``collect`` — so the collector body never runs and the
+    injected client is never touched. Queue a response that would surface if the guard
+    were bypassed, then assert it was never consumed.
+    """
+    client = FakeClient([{"Events": [{"EventId": "should-not-be-returned"}]}])
+    with pytest.raises(ValidationError):
+        CloudTrailCollector(client).collect(TimeWindow(start=start, end=end))
+    assert client.calls == []

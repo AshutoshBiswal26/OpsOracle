@@ -1,0 +1,513 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1. Project foundation and package scaffolding": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449139234
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449168930
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449282444
+      }
+    ],
+    "2.1 Implement `config.py` loading settings from environment with defaults from": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449140373
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449297490
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790450975279
+      }
+    ],
+    "2.2 Implement `errors.py` with the `OpsOracleError` hierarchy (`ConfigError`,": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449140588
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790450980058
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790452823794
+      }
+    ],
+    "3.1 Implement `models/evidence.py`: `EvidenceSource`, `ResourceRef`, `Actor`,": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449140737
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790452828739
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790452940434
+      }
+    ],
+    "3.2 Add construction validation that raises `ValidationError` on missing/invalid": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449140876
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790452945006
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790453004015
+      }
+    ],
+    "3.3 Write tests: to_dict/from_dict round-trip, ID stability/determinism, and": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449140991
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790453008908
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790453215327
+      }
+    ],
+    "4. Supporting models (correlation, investigation, report)": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449141104
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790453219882
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790453338517
+      }
+    ],
+    "5.1 Implement `collectors/base.py`: `Collector` protocol and shared": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449141197
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790453346644
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790453582538
+      }
+    ],
+    "5.2 Implement `collectors/cloudtrail.py` `CloudTrailCollector` with injectable": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449141320
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790453589968
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790453906077
+      }
+    ],
+    "5.3 Write tests with mocked client: multi-page pagination; throttling→retry→": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449141412
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790453910446
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790454038866
+      }
+    ],
+    "6.1 Implement `normalization/base.py` `Normalizer` protocol and": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449141509
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790454045463
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790454201024
+      }
+    ],
+    "6.2 Make per-record normalization tolerant: missing optional fields become": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449141592
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790454206223
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790454297782
+      }
+    ],
+    "6.3 Write tests: full record; record with missing fields; nested-detail": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449141690
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790454302528
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790454440770
+      }
+    ],
+    "7. Timeline builder": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449141777
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790454445678
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790454616532
+      }
+    ],
+    "8.1 Implement `correlation/engine.py` `CorrelationEngine` with configurable": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449141911
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790454623620
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790454722073
+      }
+    ],
+    "8.2 Add the auditable change/failure classification lookup used by the": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449142003
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790454731409
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790454918507
+      }
+    ],
+    "8.3 Write tests: proximity in/out of window; shared-resource; ordered": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449142091
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790454923558
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790455042778
+      }
+    ],
+    "9. Investigation context builder": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449142179
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790455050622
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790455128815
+      }
+    ],
+    "10.1 Implement `reasoning/prompt.py` (prompt contract encoding RULES.md §7 and": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449142277
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790455148584
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790455355134
+      }
+    ],
+    "10.2 Implement `reasoning/bedrock.py` `BedrockReasoner` with injectable": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449142381
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790455361095
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790455479331
+      }
+    ],
+    "10.3 Implement graceful fallback: any Bedrock/parse failure returns": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449142475
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790455484102
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790455607951
+      }
+    ],
+    "10.4 Write tests with mocked client: malformed JSON handled; unknown-evidence-id": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449142568
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790455613755
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790455702467
+      }
+    ],
+    "11. Incident report builder and renderer": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449142649
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790455707883
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790455905245
+      }
+    ],
+    "12.1 Implement `investigation/investigator.py` wiring": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449142745
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790455912061
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790456105644
+      }
+    ],
+    "12.2 Implement `cli.py` to run an investigation over a `--start`/`--end` window": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449142874
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790456112568
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790456284448
+      }
+    ],
+    "12.3 Write an end-to-end test with all AWS clients mocked: canned CloudTrail": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449142970
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790456290898
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790456518973
+      }
+    ],
+    "13. Cross-cutting verification pass": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790449143060
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790456527703
+      },
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790456795988
+      }
+    ],
+    "2. Configuration and typed error hierarchy": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790452823947
+      }
+    ],
+    "3. Evidence model": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790453215462
+      }
+    ],
+    "5. Collector base + CloudTrail collector": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790454039007
+      }
+    ],
+    "6. CloudTrail normalization": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790454440884
+      }
+    ],
+    "8. Correlation engine": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790455042888
+      }
+    ],
+    "10. Bedrock reasoning": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790455702639
+      }
+    ],
+    "12. Investigation orchestrator and CLI": [
+      {
+        "executionId": "6dcd468d-2903-409b-922a-0f83c0afecd6",
+        "chatSessionId": "sess_6f55dff3-31e0-465d-9df4-ccb1bd5c834e",
+        "timestamp": 1790456519220
+      }
+    ]
+  }
+}

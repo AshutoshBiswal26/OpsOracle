@@ -93,3 +93,46 @@ def test_classify_helpers():
     assert is_failure(ev(0, "X", metadata={"error_code": "Y"})) is True
     alarm = ev(0, "cpu-high", metadata={"state": "ALARM"}, source=EvidenceSource.CLOUDWATCH_ALARM)
     assert is_failure(alarm) is True
+
+
+def _mixed_events_triggering_all_types():
+    """Two events that together trigger temporal-proximity, shared-resource, and
+    change-before-failure correlations under the default engine windows."""
+    r = ResourceRef(type="AWS::Lambda::Function", name="fn-mixed")
+    change = ev(0, "UpdateFunctionConfiguration", resources=[r])
+    failure = ev(2, "Invoke", resources=[r], metadata={"error_code": "Throttled"})
+    return change, failure
+
+
+def test_all_correlation_types_present_in_mixed_scenario():
+    # Guards the fixture used by the language tests: it must exercise every rule so the
+    # "no caused" / qualified-language assertions cover all explanation shapes.
+    engine = CorrelationEngine()
+    corrs = engine.correlate(list(_mixed_events_triggering_all_types()))
+    assert types(corrs) == {
+        CorrelationType.TEMPORAL_PROXIMITY,
+        CorrelationType.SHARED_RESOURCE,
+        CorrelationType.CHANGE_BEFORE_FAILURE,
+    }
+
+
+def test_no_explanation_ever_contains_the_word_caused():
+    # Strict form of requirement 5.5: correlation explanations must never assert
+    # causality via the word "caused", across every correlation type produced.
+    engine = CorrelationEngine()
+    corrs = engine.correlate(list(_mixed_events_triggering_all_types()))
+    assert corrs, "expected correlations to assert against"
+    for c in corrs:
+        assert "caused" not in c.explanation.lower(), c.explanation
+
+
+def test_explanations_use_qualified_language():
+    # Positive check (requirement 5.5): each explanation uses qualified/hedged phrasing
+    # such as "correlated with", "preceded", or "candidate cause" rather than a
+    # definitive causal claim.
+    engine = CorrelationEngine()
+    corrs = engine.correlate(list(_mixed_events_triggering_all_types()))
+    qualified = ("correlated with", "preceded", "candidate cause", "not causal", "not confirmed")
+    for c in corrs:
+        lowered = c.explanation.lower()
+        assert any(phrase in lowered for phrase in qualified), c.explanation

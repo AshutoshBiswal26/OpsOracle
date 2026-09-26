@@ -13,6 +13,7 @@ def test_defaults_when_env_empty():
     cfg = load_config(env={})
     assert cfg == Config()
     assert cfg.region is None
+    assert cfg.profile is None
     assert cfg.model_id == DEFAULT_MODEL_ID
     assert cfg.max_events == DEFAULT_MAX_EVENTS
     assert cfg.reasoning_enabled is True
@@ -22,6 +23,7 @@ def test_reads_values_from_env():
     cfg = load_config(
         env={
             "OPSORACLE_AWS_REGION": "eu-west-1",
+            "AWS_PROFILE": "ops-readonly",
             "OPSORACLE_MODEL_ID": "some.model",
             "OPSORACLE_MAX_EVENTS": "10",
             "OPSORACLE_MAX_TOKENS": "500",
@@ -30,11 +32,21 @@ def test_reads_values_from_env():
         }
     )
     assert cfg.region == "eu-west-1"
+    assert cfg.profile == "ops-readonly"
     assert cfg.model_id == "some.model"
     assert cfg.max_events == 10
     assert cfg.max_tokens == 500
     assert cfg.reasoning_enabled is False
     assert cfg.max_retries == 3
+
+
+def test_profile_loaded_from_aws_profile_env():
+    cfg = load_config(env={"AWS_PROFILE": "prod"})
+    assert cfg.profile == "prod"
+    # profile absence defers to the Boto3 default chain
+    assert load_config(env={}).profile is None
+    # empty string is treated as unset
+    assert load_config(env={"AWS_PROFILE": ""}).profile is None
 
 
 @pytest.mark.parametrize("value", ["yes", "1", "ON", "true"])

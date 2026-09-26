@@ -70,6 +70,17 @@ class FakeBedrock:
         }
 
 
+class FailingBedrock:
+    """A Bedrock stub whose converse() raises, exercising the graceful-fallback path."""
+
+    def __init__(self):
+        self.called = False
+
+    def converse(self, **kwargs):
+        self.called = True
+        raise RuntimeError("bedrock unavailable (simulated)")
+
+
 def make_investigator(bedrock_ids, *, reasoning_enabled=True):
     config = Config(reasoning_enabled=reasoning_enabled, max_events=50)
     records = [
@@ -100,15 +111,33 @@ def test_end_to_end_produces_report_with_traceable_evidence():
     report = investigator.investigate(window())
     md = report.to_markdown()
 
-    # deterministic evidence present and traceable
+    # --- deterministic evidence present and traceable in the rendered report ---
+    timeline_ids = {e.evidence_id for e in report.timeline}
+    assert timeline_ids == set(ids)
     for eid in ids:
         assert eid in md
-    # change-before-failure correlation surfaced
+
+    # --- correlations reference only real timeline evidence ids (Req 11.3) ---
+    assert report.correlations, "expected at least one deterministic correlation"
+    for corr in report.correlations:
+        assert corr.evidence_ids, "correlation must cite evidence"
+        for cited in corr.evidence_ids:
+            assert cited in timeline_ids
+            assert cited in md
+    # change-before-failure correlation surfaced (change event before failure event)
     assert "change_before_failure" in md
-    # AI reasoning present and grounded
+
+    # --- AI candidate cause cites supplied, real evidence ids (Req 11.3) ---
     assert report.reasoning.ai_available is True
     assert "candidate cause" in md
-    assert report.reasoning.contributing_factors[0].evidence_ids == ids
+    factors = report.reasoning.contributing_factors
+    assert factors, "expected the mocked model's candidate cause to survive validation"
+    assert factors[0].evidence_ids == ids
+    for factor in factors:
+        assert factor.evidence_ids, "every candidate cause must cite evidence"
+        for cited in factor.evidence_ids:
+            assert cited in timeline_ids
+            assert cited in md
 
 
 def test_end_to_end_graceful_without_reasoning():
@@ -120,6 +149,37 @@ def test_end_to_end_graceful_without_reasoning():
     # deterministic sections still present
     assert "## Observed evidence" in md
     assert "change_before_failure" in md
+
+
+def test_end_to_end_graceful_on_bedrock_failure():
+    # Reasoning is enabled and there is evidence to reason over, but the Bedrock call
+    # itself raises. The pipeline must still render a valid report from the
+    # deterministic evidence (Req 7.7 / 11.3).
+    config = Config(reasoning_enabled=True, max_events=50)
+    records = [
+        ct_record("1", "UpdateFunctionConfiguration", 10),
+        ct_record("2", "Invoke", 12, error="Throttled"),
+    ]
+    collector = CloudTrailCollector(FakeCloudTrail(records))
+    bedrock = FailingBedrock()
+    reasoner = BedrockReasoner(bedrock, model_id="m", enabled=True)
+    investigator = Investigator(
+        config=config, cloudtrail_collector=collector, reasoner=reasoner
+    )
+
+    report = investigator.investigate(window())
+    md = report.to_markdown()
+
+    # the model was actually invoked and failed
+    assert bedrock.called is True
+    # graceful fallback: no AI section, but deterministic report still complete
+    assert report.reasoning.ai_available is False
+    assert "AI reasoning unavailable" in md
+    assert "## Observed evidence" in md
+    assert "change_before_failure" in md
+    # deterministic evidence is still traceable despite the reasoning failure
+    for e in report.timeline:
+        assert e.evidence_id in md
 
 
 def test_end_to_end_empty_window_no_events():

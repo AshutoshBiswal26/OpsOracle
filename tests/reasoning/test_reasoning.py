@@ -167,3 +167,97 @@ def test_reasoner_malformed_output_degrades_gracefully():
     reasoner = BedrockReasoner(client, model_id="m")
     result = reasoner.reason(inv)
     assert result.ai_available is False
+
+
+# ---- graceful fallback paths (task 10.3, requirement 7.7) ----
+
+
+class ShapeBedrock:
+    """Client returning a syntactically valid response with an unexpected shape."""
+
+    def __init__(self, payload):
+        self._payload = payload
+        self.calls = []
+
+    def converse(self, **kwargs):
+        self.calls.append(kwargs)
+        return self._payload
+
+
+def test_fallback_client_raises_returns_ai_unavailable_with_note():
+    inv, _ = investigation_with_event()
+    client = FakeBedrock(exc=RuntimeError("network down"))
+    reasoner = BedrockReasoner(client, model_id="m")
+    result = reasoner.reason(inv)
+    assert result.ai_available is False
+    # Note explains why reasoning is unavailable rather than raising.
+    assert result.notes
+    assert "unavailable" in result.notes
+
+
+def test_fallback_parse_error_returns_ai_unavailable_with_note():
+    inv, _ = investigation_with_event()
+    client = FakeBedrock(text="definitely not json {oops")
+    reasoner = BedrockReasoner(client, model_id="m")
+    result = reasoner.reason(inv)
+    assert result.ai_available is False
+    assert result.notes
+    assert "unavailable" in result.notes
+
+
+def test_fallback_unexpected_response_shape_returns_ai_unavailable():
+    inv, _ = investigation_with_event()
+    # Missing the expected output/message/content structure.
+    client = ShapeBedrock({"unexpected": "shape"})
+    reasoner = BedrockReasoner(client, model_id="m")
+    result = reasoner.reason(inv)
+    assert result.ai_available is False
+    assert result.notes
+    assert "unavailable" in result.notes
+
+
+def test_fallback_empty_text_content_returns_ai_unavailable():
+    inv, _ = investigation_with_event()
+    # Well-formed envelope but no text blocks in the content list.
+    client = ShapeBedrock({"output": {"message": {"content": []}}, "usage": {}})
+    reasoner = BedrockReasoner(client, model_id="m")
+    result = reasoner.reason(inv)
+    assert result.ai_available is False
+    assert result.notes
+    assert "unavailable" in result.notes
+
+
+# ---- token usage is logged, not just captured (requirement 10.3) ----
+
+
+def test_reasoner_logs_token_usage(caplog):
+    """last_usage is captured AND emitted to the log for measurability (req 10.3)."""
+    import logging
+
+    inv, e = investigation_with_event()
+    text = json.dumps(
+        {
+            "contributing_factors": [
+                {"description": "candidate", "evidence_ids": [e.evidence_id], "confidence": "low"}
+            ],
+            "uncertainty": "some",
+            "next_actions": [],
+        }
+    )
+    client = FakeBedrock(
+        text=text,
+        usage={"inputTokens": 11, "outputTokens": 22, "totalTokens": 33},
+    )
+    reasoner = BedrockReasoner(client, model_id="m", max_tokens=100)
+
+    with caplog.at_level(logging.INFO, logger="opsoracle.reasoning"):
+        result = reasoner.reason(inv)
+
+    assert result.ai_available is True
+    # Captured for programmatic access.
+    assert reasoner.last_usage == {"inputTokens": 11, "outputTokens": 22, "totalTokens": 33}
+    # And emitted to the log so token spend is observable.
+    usage_logs = [r for r in caplog.records if "usage" in r.getMessage()]
+    assert usage_logs, "expected a bedrock usage log record"
+    logged = usage_logs[0].getMessage()
+    assert "33" in logged and "11" in logged and "22" in logged

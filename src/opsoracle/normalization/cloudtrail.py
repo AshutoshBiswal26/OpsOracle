@@ -24,7 +24,16 @@ class CloudTrailNormalizer:
         self.skipped = []
         events: list[EvidenceEvent] = []
         for record in raw_records or []:
-            event = self._normalize_one(record)
+            try:
+                event = self._normalize_one(record)
+            except Exception as exc:  # noqa: BLE001 - one bad record must not abort the batch
+                # Any unexpected error normalizing a single record is contained here:
+                # record it as skipped (with the reason) and keep processing the rest
+                # of the batch (requirement 3.4).
+                self.skipped.append(
+                    {"reason": f"unexpected error: {exc}", "raw": record}
+                )
+                continue
             if event is not None:
                 events.append(event)
         return events
@@ -54,10 +63,14 @@ class CloudTrailNormalizer:
         actor = self._extract_actor(record, detail)
         resources = self._extract_resources(record, detail)
 
+        read_only = _coerce_bool(record.get("ReadOnly"))
+        if read_only is None:
+            read_only = _coerce_bool(detail.get("readOnly"))
+
         metadata: dict[str, Any] = {
             "event_source": event_source,
             "event_id": record.get("EventId") or detail.get("eventID"),
-            "read_only": _coerce_bool(record.get("ReadOnly")),
+            "read_only": read_only,
             "source_ip": detail.get("sourceIPAddress"),
             "error_code": detail.get("errorCode"),
             "error_message": detail.get("errorMessage"),
@@ -129,14 +142,31 @@ class CloudTrailNormalizer:
     @staticmethod
     def _extract_resources(record: dict, detail: dict) -> list[ResourceRef]:
         resources: list[ResourceRef] = []
+        seen: set[tuple[str | None, str | None, str | None]] = set()
+
+        def _add(type_: str | None, name: str | None, arn: str | None) -> None:
+            if not any([type_, name, arn]):
+                return
+            key = (type_, name, arn)
+            if key in seen:
+                return
+            seen.add(key)
+            resources.append(ResourceRef(type=type_, name=name, arn=arn))
+
+        # Top-level Resources (from lookup_events summary).
         for res in record.get("Resources", []) or []:
             if isinstance(res, dict):
-                resources.append(
-                    ResourceRef(
-                        type=res.get("ResourceType"),
-                        name=res.get("ResourceName"),
-                    )
+                _add(res.get("ResourceType"), res.get("ResourceName"), None)
+
+        # Resources that only live inside the nested CloudTrailEvent detail (Req 3.3).
+        for res in detail.get("resources", []) or []:
+            if isinstance(res, dict):
+                _add(
+                    res.get("type") or res.get("ResourceType"),
+                    res.get("resourceName") or res.get("ResourceName"),
+                    res.get("ARN") or res.get("arn"),
                 )
+
         return resources
 
     @staticmethod
